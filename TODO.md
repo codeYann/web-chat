@@ -2,9 +2,16 @@
 
 ## Learning about concunrrency and go concunrrency model
 
-- [ ] Goroutines
+- [x] Goroutines
 - [ ] SyncGroups
 - [ ] Channels
 - [ ] Mutexes
 
 ## Learning about web applications using go
+
+- [ ] How to create web server using go standard lib
+- [ ] How middlewares works
+- [ ] How routes works
+- [ ] MVC
+- [ ] Outros patterns para web
+
