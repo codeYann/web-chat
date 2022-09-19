@@ -1,29 +1,62 @@
-// Package models define all data types of application
+// Package models define structs to map database tables.
 package models
 
 import (
-	"github.com/codeYann/web-chat/utils"
+	"log"
+
+	"github.com/codeYann/web-chat/database"
 )
 
-// UserInterface export all functions that User must have
-type UserInterface interface {
-	GetAllUsers() []User
-	GetUserById(ID int) User
+// Users struct defines all information Users must have.
+type Users struct {
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	password string `json:"-"`
+	Nickname string `json:"nickname"`
 }
 
-// User struct defines
-type User struct {
-	Name     string `json:"Name"`
-	Nickname string `json:"Nickname"`
-	Password string `json:"-"`
-	ID       int    `json:"ID"`
-}
-
-
-func CreateUser(name, nickName, password string) *User {
-	return &User{
+// CreateUsers return a pointer to a new user
+func CreateUsers(id int, name, email, passowrd, nickame string) *Users {
+	return &Users{
+		ID:       id,
 		Name:     name,
-		Nickname: name,
-		Password: utils.GenerateHashString(password),
+		Email:    email,
+		password: passowrd,
+		Nickname: nickame,
 	}
+}
+
+// GetAllUsers returns a list of all users.
+func GetAllUsers() *Users {
+	var user Users
+
+	connection, err := database.OpenConnection()
+	if err != nil {
+		log.Fatal("Unable to connect database")
+	}
+
+	defer connection.Close()
+
+	response, err := connection.Query(`SELECT * FROM users`)
+	if err != nil {
+		log.Fatal("It cannot run SELECT * FROM users query")
+	}
+
+	defer response.Close()
+
+	for response.Next() {
+		err := response.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Email,
+			&user.password,
+			&user.Nickname,
+		)
+		if err != nil {
+			log.Fatal("Error on iterate over rows returned by 'SELECT * FROM users' query.")
+		}
+	}
+
+	return &user
 }
