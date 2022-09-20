@@ -2,22 +2,17 @@
 package server
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/codeYann/web-chat/models"
+	"github.com/codeYann/web-chat/controllers"
 	"github.com/codeYann/web-chat/settings"
 )
 
 var apiSettings *settings.APIConfig = settings.ExportAPIConfig()
 
 func createHTTPServer() {
-	log.Println(models.GetAllUsers())
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "%s", "this is my first web server "+r.URL.Path)
-	})
-
+	http.HandleFunc("/", controllers.Users)
 	http.ListenAndServe(apiSettings.Port, nil)
 }
 
