@@ -29,20 +29,12 @@ func CreateUsers(id int, name, email, passowrd, nickame string) *Users {
 
 // GetAllUsers returns a list of users gets by 'SELECT * FROM users' query.
 func GetAllUsers() []Users {
-	usersList := make([]Users, 0)
+	var usersList []Users
 
 	connection, err := database.OpenConnection()
 	if err != nil {
 		log.Fatal("Unable to connect to the database")
 	}
-
-	var (
-		ID       int
-		Name     string
-		Email    string
-		Password string
-		Nickname string
-	)
 
 	defer connection.Close()
 
@@ -54,19 +46,20 @@ func GetAllUsers() []Users {
 	defer response.Close()
 
 	for response.Next() {
+		var user Users
+
 		err := response.Scan(
-			&ID,
-			&Name,
-			&Email,
-			&Password,
-			&Nickname,
+			&user.ID,
+			&user.Name,
+			&user.Email,
+			&user.password,
+			&user.Nickname,
 		)
 		if err != nil {
 			log.Fatal("Error on iterate over rows returned by 'SELECT * FROM users' query.")
 		}
-		user := CreateUsers(ID, Name, Email, Password, Nickname)
 
-		usersList = append(usersList, *user)
+		usersList = append(usersList, user)
 	}
 	return usersList
 }
