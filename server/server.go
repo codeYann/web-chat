@@ -2,22 +2,12 @@
 package server
 
 import (
-	"log"
-	"net/http"
-
-	"github.com/codeYann/web-chat/controllers"
-	"github.com/codeYann/web-chat/settings"
+	"github.com/codeYann/web-chat/routes"
 )
-
-var apiSettings *settings.APIConfig = settings.ExportAPIConfig()
-
-func createHTTPServer() {
-	http.HandleFunc("/", controllers.Users)
-	http.ListenAndServe(apiSettings.Port, nil)
-}
 
 // Run function exec the web server.
 func Run() {
-	log.Printf("Server Running on Localhost%s", apiSettings.Port)
-	createHTTPServer()
+	newRoutes := routes.CreateRoutes()
+	newRoutes.InitRoutes()
+  newRoutes.Init()
 }
