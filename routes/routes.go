@@ -24,7 +24,7 @@ func CreateRoutes() *Routes {
 
 // InitRoutes loads all routes
 func (r Routes) InitRoutes() {
-	r.Router.HandleFunc("/users", controllers.Users).Methods("GET")
+	r.Router.HandleFunc("/", controllers.Users).Methods("GET")
 }
 
 // Init runs http server
