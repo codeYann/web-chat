@@ -22,14 +22,14 @@ func CreateRoutes() *Routes {
 	}
 }
 
-// InitRoutes loads all routes
-func (r Routes) InitRoutes() {
-	r.Router.HandleFunc("/", controllers.Users).Methods("GET")
-}
-
 // Init runs http server
 func (r Routes) Init() {
 	apiSettings := settings.ExportAPIConfig()
+
+	r.Router.HandleFunc("/users", controllers.Users).Methods("GET")
+	r.Router.HandleFunc("/users/{ID}", controllers.UserByID).Methods("GET")
+  r.Router.HandleFunc("/users", controllers.StoreUser).Methods("POST")
+
 	log.Printf("Server Running on Localhost%s", apiSettings.Port)
-	http.ListenAndServe(apiSettings.Port, nil)
+	log.Fatal(http.ListenAndServe(apiSettings.Port, r.Router))
 }
