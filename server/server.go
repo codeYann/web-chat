@@ -7,7 +7,6 @@ import (
 
 // Run function exec the web server.
 func Run() {
-	newRoutes := routes.CreateRoutes()
-	newRoutes.InitRoutes()
-  newRoutes.Init()
+	server := routes.CreateRoutes()
+	server.Init()
 }
