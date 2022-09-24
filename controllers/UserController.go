@@ -21,8 +21,6 @@ func Users(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(allUsers); err != nil {
 		log.Fatal("It's not possible to send json")
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // UserByID returns a single user in JSON format.
@@ -36,8 +34,6 @@ func UserByID(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		log.Fatal("It's not possible to send json")
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // StoreUser insert a new user to the database.
@@ -54,6 +50,4 @@ func StoreUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		log.Fatal("Error on Encode User data")
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
