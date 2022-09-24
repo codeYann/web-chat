@@ -42,29 +42,40 @@ func FindAll() Users {
 
 	defer connection.Close()
 
-	response, err := connection.Query(`SELECT * FROM users`)
-	if err != nil {
-		log.Fatal("It isn't possible to run 'SELECT * FROM useres' ")
-	}
+	usersResponseChan := make(chan User)
 
-	defer response.Close()
-
-	for response.Next() {
-		var user User
-
-		err := response.Scan(
-			&user.ID,
-			&user.Name,
-			&user.Email,
-			&user.Password,
-			&user.Nickname,
-		)
+	go func() {
+		response, err := connection.Query(`SELECT * FROM users`)
 		if err != nil {
-			log.Fatal("Error on iterate over rows returned by 'SELECT * FROM users' query.")
+			log.Fatal("It's not possible to run 'SELECT * FROM useres' ")
 		}
 
+		defer response.Close()
+
+		for response.Next() {
+			var user User
+
+			err := response.Scan(
+				&user.ID,
+				&user.Name,
+				&user.Email,
+				&user.Password,
+				&user.Nickname,
+			)
+			if err != nil {
+				log.Fatal("Error on iterate over rows returned by 'SELECT * FROM users' query.")
+			}
+
+			usersResponseChan <- user
+		}
+
+		close(usersResponseChan)
+	}()
+
+	for user := range usersResponseChan {
 		usersList = append(usersList, user)
 	}
+
 	return usersList
 }
 
@@ -127,7 +138,6 @@ func Save(user User) {
 	)
 
 	response, err := connection.Query(query)
-	log.Println(err)
 	if err != nil {
 		log.Fatal(`It cannot run INSERT INTO query`)
 	}
