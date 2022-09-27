@@ -2,36 +2,51 @@
 package controllers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/codeYann/web-chat/models"
+	"github.com/codeYann/web-chat/database"
+	// "github.com/codeYann/web-chat/models"
+	"github.com/codeYann/web-chat/repositories"
+	"github.com/codeYann/web-chat/services"
 	"github.com/gorilla/mux"
 )
 
+func repositoryWrapper(connection *sql.DB) *services.UserService {
+	repository := repositories.CreatePostgresRepository(connection)
+	return services.CreateUserServices(repository)
+}
+
 // Users returns all users in JSON format.
-// It uses models.FindAll() function to get every possible user row in the database.
+// It uses services.GetAllUsers() function to get every possible user.
 func Users(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	allUsers := models.FindAll()
+	connection, _ := database.OpenConnection()
+	userServices := repositoryWrapper(connection)
 
-	if err := json.NewEncoder(w).Encode(allUsers); err != nil {
+	response, _ := userServices.GetAllUsers()
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Fatal("It's not possible to send json")
 	}
 }
 
 // UserByID returns a single user in JSON format.
-// It uses models.FindOne() to get a this single user.
+// It uses services.GetUser() to an user.
 func UserByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	userID, _ := strconv.Atoi(params["ID"])
 
-	user := models.FindOne(uint64(userID))
+	connection, _ := database.OpenConnection()
+	userServices := repositoryWrapper(connection)
 
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	response, _ := userServices.GetUser(uint64(userID))
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Fatal("It's not possible to send json")
 	}
 }
@@ -39,15 +54,65 @@ func UserByID(w http.ResponseWriter, r *http.Request) {
 // StoreUser insert a new user to the database.
 // It uses models.Save() to store a new user.
 func StoreUser(w http.ResponseWriter, r *http.Request) {
-	var user models.User
+	var user struct {
+		ID       int    `json:"id"`
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Nickname string `json:"nickname"`
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		log.Fatal("Error on decode body params")
 	}
 
-	models.Save(user)
+	connection, _ := database.OpenConnection()
+	userServices := repositoryWrapper(connection)
 
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	response, _ := userServices.CreateUser(user)
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Fatal("Error on Encode User data")
+	}
+}
+
+// UpdateUser updates a user nickname
+// It uses repository.UpdateUser and return this user
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	var userInfo struct {
+		ID       uint64
+		Nickname string
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&userInfo); err != nil {
+		log.Fatal("Error on decode body params")
+	}
+
+	connection, _ := database.OpenConnection()
+	userServices := repositoryWrapper(connection)
+
+	response, _ := userServices.UpdateUser(userInfo.ID, userInfo.Nickname)
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Fatal("Error on encode user data")
+	}
+}
+
+// RemoveUser removes a user.
+// It ueses repository.RemoveOne and return this user
+func RemoveUser(w http.ResponseWriter, r *http.Request) {
+	var userID uint64
+
+	if err := json.NewDecoder(r.Body).Decode(&userID); err != nil {
+		log.Fatal("Error on decode body params")
+	}
+
+	connection, _ := database.OpenConnection()
+	userServices := repositoryWrapper(connection)
+
+	response, _ := userServices.RemoveUser(userID)
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Fatal("Error on encode user data")
 	}
 }
