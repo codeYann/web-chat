@@ -3,15 +3,20 @@
 ## Learning about concunrrency and go concunrrency model
 
 - [x] Goroutines
-- [ ] SyncGroups
-- [ ] Channels
-- [ ] Mutexes
+- [x] SyncGroups
+- [x] Channels
+- [x] Mutexes
 
 ## Learning about web applications using go
 
-- [ ] How to create web server using go standard lib
+- [x] How to create web server using go standard lib
 - [ ] How middlewares works
-- [ ] How routes works
-- [ ] MVC
-- [ ] Outros patterns para web
+- [x] How routes works
+- [x] MVC
+- [x] patterns
 
+## Learning about architecture patters
+- [ ] What is repository pattern
+- [ ] How repository pattern works
+- [ ] How repository could be implemented in golang
+- [ ] How apply this pattern in web-chat appplication
