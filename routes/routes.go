@@ -28,7 +28,9 @@ func (r Routes) Init() {
 
 	r.Router.HandleFunc("/users", controllers.Users).Methods("GET")
 	r.Router.HandleFunc("/users/{ID}", controllers.UserByID).Methods("GET")
-  r.Router.HandleFunc("/users", controllers.StoreUser).Methods("POST")
+	r.Router.HandleFunc("/users", controllers.StoreUser).Methods("POST")
+	r.Router.HandleFunc("/users/update", controllers.UpdateUser).Methods("PATCH")
+	r.Router.HandleFunc("/users/remove", controllers.RemoveUser).Methods("DELETE")
 
 	log.Printf("Server Running on Localhost%s", apiSettings.Port)
 	log.Fatal(http.ListenAndServe(apiSettings.Port, r.Router))
