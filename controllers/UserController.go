@@ -101,16 +101,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 // RemoveUser removes a user.
 // It ueses repository.RemoveOne and return this user
 func RemoveUser(w http.ResponseWriter, r *http.Request) {
-	var userID uint64
-
-	if err := json.NewDecoder(r.Body).Decode(&userID); err != nil {
-		log.Fatal("Error on decode body params")
-	}
+	userID := mux.Vars(r)
+	id, _ := strconv.Atoi(userID["ID"])
 
 	connection, _ := database.OpenConnection()
 	userServices := repositoryWrapper(connection)
 
-	response, _ := userServices.RemoveUser(userID)
+	response, _ := userServices.RemoveUser(uint64(id))
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Fatal("Error on encode user data")
