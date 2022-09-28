@@ -30,7 +30,7 @@ func (r *PostgresRepository) FindAll() (models.Users, error) {
 	go func() {
 		response, err := r.db.Query(`SELECT * FROM users`)
 		if err != nil {
-			log.Fatal("Unable to run SELECT query")
+			log.Fatal("Unable to run SELECT query", err.Error())
 		}
 		defer response.Close()
 		for response.Next() {
@@ -44,7 +44,10 @@ func (r *PostgresRepository) FindAll() (models.Users, error) {
 				&user.Nickname,
 			)
 			if err != nil {
-				log.Fatal("Error on iterate over rows returned by 'SELECT * FROM users' query.")
+				log.Fatal(
+					"Error on iterate over rows returned by 'SELECT * FROM users' query.",
+					err.Error(),
+				)
 			}
 
 			usersResponseChannel <- user
@@ -69,7 +72,7 @@ func (r *PostgresRepository) FindOne(ID uint64) (models.User, error) {
 		query := fmt.Sprintf(`SELECT * FROM users WHERE id = %d`, ID)
 		stmt, err := r.db.Query(query)
 		if err != nil {
-			log.Fatal("Unable to prepare SELECT query")
+			log.Fatal("Unable to prepare SELECT query", err.Error())
 		}
 
 		for stmt.Next() {
@@ -81,7 +84,7 @@ func (r *PostgresRepository) FindOne(ID uint64) (models.User, error) {
 				&user.Nickname,
 			)
 			if err != nil {
-				log.Fatal("Error on scan row ")
+				log.Fatal("Error on scan row", err.Error())
 			}
 			userReponseChannel <- user
 		}
@@ -106,13 +109,13 @@ func (r *PostgresRepository) SaveOne(user models.User) (models.User, error) {
 
 		stmt, err := r.db.Query(query)
 		if err != nil {
-			log.Fatal("Unable to prepare INSERT INTO query")
+			log.Fatal("Unable to prepare INSERT INTO query", err.Error())
 		}
 		for stmt.Next() {
 		}
 		err = stmt.Close()
 		if err != nil {
-			log.Fatal("Unable to close statement query")
+			log.Fatal("Unable to close statement query", err.Error())
 		}
 		UserSavedChan <- user
 		close(UserSavedChan)
@@ -134,12 +137,12 @@ func (r *PostgresRepository) UpdateOne(ID uint64, nickname string) (models.User,
 
 		stmt, err := r.db.Query(query)
 		if err != nil {
-			log.Fatal("Unable to create UPDATE query")
+			log.Fatal("Unable to create UPDATE query", err.Error())
 		}
 
 		err = stmt.Close()
 		if err != nil {
-			log.Fatal("Unable to close UPDATE query")
+			log.Fatal("Unable to close UPDATE query", err.Error())
 		}
 
 		wg.Done()
@@ -158,20 +161,20 @@ func (r *PostgresRepository) DeleteOne(ID uint64) (models.User, error) {
 	waitGroup.Add(1)
 
 	go func(wg *sync.WaitGroup) {
-		query := fmt.Sprintf(`DELETE FROM TABLE users WHERE id = %d`, ID)
+		query := fmt.Sprintf(`DELETE FROM users WHERE id = %d`, ID)
 
 		stmt, err := r.db.Query(query)
 		if err != nil {
-			log.Fatal("Unable to prepare DELETE query")
+			log.Fatal("Unable to prepare DELETE query", err.Error())
 		}
 
 		err = stmt.Close()
 		if err != nil {
-			log.Fatal("Unable to close DELETE query")
+			log.Fatal("Unable to close DELETE query", err.Error())
 		}
 
-		err = stmt.Close()
 		wg.Done()
+		r.db.Close()
 	}(&waitGroup)
 
 	waitGroup.Wait()
