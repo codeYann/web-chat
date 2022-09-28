@@ -16,7 +16,7 @@
 - [x] patterns
 
 ## Learning about architecture patters
-- [ ] What is repository pattern
-- [ ] How repository pattern works
-- [ ] How repository could be implemented in golang
-- [ ] How apply this pattern in web-chat appplication
+- [x] What is repository pattern
+- [x] How repository pattern works
+- [x] How repository could be implemented in golang
+- [x] How apply this pattern in web-chat appplication
