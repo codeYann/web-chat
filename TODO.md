@@ -20,3 +20,10 @@
 - [x] How repository pattern works
 - [x] How repository could be implemented in golang
 - [x] How apply this pattern in web-chat appplication
+
+
+## Learning about JWT
+- [ ] What is a json web token
+- [ ] How jwt works?
+- [ ] How implements jwt in web-chat application
+- [ ] How consume jwt in frontend
