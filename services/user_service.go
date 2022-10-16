@@ -25,7 +25,7 @@ func CreateUserServices(repository models.UserRepository) *UserService {
 func (u *UserService) GetAllUsers() (models.Users, error) {
 	response, err := u.Repository.FindAll()
 	if err != nil {
-		log.Fatal("Unable to return all users.")
+		log.Fatal("Unable to return all users.", err.Error())
 	}
 	return response, err
 }
@@ -35,7 +35,7 @@ func (u *UserService) GetAllUsers() (models.Users, error) {
 func (u *UserService) GetUser(ID uint64) (models.User, error) {
 	response, err := u.Repository.FindOne(ID)
 	if err != nil {
-		log.Fatal("Unable to return a user")
+		log.Fatal("Unable to return a user", err.Error())
 	}
 	return response, err
 }
@@ -45,7 +45,7 @@ func (u *UserService) GetUser(ID uint64) (models.User, error) {
 func (u *UserService) CreateUser(user models.User) (models.User, error) {
 	response, err := u.Repository.SaveOne(user)
 	if err != nil {
-		log.Fatal("Unable to return a new user")
+		log.Fatal("Unable to return a new user", err.Error())
 	}
 	return response, err
 }
@@ -55,7 +55,7 @@ func (u *UserService) CreateUser(user models.User) (models.User, error) {
 func (u *UserService) RemoveUser(ID uint64) (models.User, error) {
 	response, err := u.Repository.DeleteOne(ID)
 	if err != nil {
-		log.Fatal("Unable to delete a new user")
+		log.Fatal("Unable to delete a new user", err.Error())
 	}
 	return response, err
 }
@@ -65,7 +65,7 @@ func (u *UserService) RemoveUser(ID uint64) (models.User, error) {
 func (u *UserService) UpdateUser(ID uint64, nickname string) (models.User, error) {
 	response, err := u.Repository.UpdateOne(ID, nickname)
 	if err != nil {
-		log.Fatal("Unable to update an user")
+		log.Fatal("Unable to update an user", err.Error())
 	}
 	return response, err
 }
