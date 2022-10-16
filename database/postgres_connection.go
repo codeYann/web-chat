@@ -27,7 +27,7 @@ func OpenConnection() (*sql.DB, error) {
 
 	connection, err := sql.Open("postgres", stringConnection)
 	if err != nil {
-		log.Fatal("Fail to open database connection")
+		log.Fatal("Fail to open database connection", err.Error())
 	}
 
 	err = connection.Ping()
