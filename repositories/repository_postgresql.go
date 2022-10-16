@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/codeYann/web-chat/models"
+	"github.com/codeYann/web-chat/utils"
 )
 
 // PostgresRepository defines a connection to postgres database
@@ -100,6 +101,8 @@ func (r *PostgresRepository) SaveOne(user models.User) (models.User, error) {
 	UserSavedChan := make(chan models.User)
 
 	go func() {
+		user.Password = fmt.Sprintf("%x", utils.SHA256Encoder(user.Password))
+
 		query := fmt.Sprintf(
 			`INSERT INTO users 
         (name, email, password, nickname) 
@@ -111,12 +114,12 @@ func (r *PostgresRepository) SaveOne(user models.User) (models.User, error) {
 		if err != nil {
 			log.Fatal("Unable to prepare INSERT INTO query", err.Error())
 		}
-		for stmt.Next() {
-		}
+
 		err = stmt.Close()
 		if err != nil {
 			log.Fatal("Unable to close statement query", err.Error())
 		}
+
 		UserSavedChan <- user
 		close(UserSavedChan)
 		r.db.Close()
