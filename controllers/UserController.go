@@ -31,7 +31,7 @@ func Users(w http.ResponseWriter, r *http.Request) {
 	response, _ := userServices.GetAllUsers()
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		log.Fatal("It's not possible to send json")
+		log.Fatal("It's not possible to send json", err.Error())
 	}
 }
 
@@ -47,7 +47,7 @@ func UserByID(w http.ResponseWriter, r *http.Request) {
 	response, _ := userServices.GetUser(uint64(userID))
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		log.Fatal("It's not possible to send json")
+		log.Fatal("It's not possible to send json", err.Error())
 	}
 }
 
@@ -63,7 +63,7 @@ func StoreUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		log.Fatal("Error on decode body params")
+		log.Fatal("Error on decode body params", err.Error())
 	}
 
 	connection, _ := database.OpenConnection()
@@ -72,7 +72,7 @@ func StoreUser(w http.ResponseWriter, r *http.Request) {
 	response, _ := userServices.CreateUser(user)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		log.Fatal("Error on Encode User data")
+		log.Fatal("Error on Encode User data", err.Error())
 	}
 }
 
@@ -85,7 +85,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&userInfo); err != nil {
-		log.Fatal("Error on decode body params")
+		log.Fatal("Error on decode body params", err.Error())
 	}
 
 	connection, _ := database.OpenConnection()
@@ -94,7 +94,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	response, _ := userServices.UpdateUser(userInfo.ID, userInfo.Nickname)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		log.Fatal("Error on encode user data")
+		log.Fatal("Error on encode user data", err.Error())
 	}
 }
 
@@ -110,6 +110,6 @@ func RemoveUser(w http.ResponseWriter, r *http.Request) {
 	response, _ := userServices.RemoveUser(uint64(id))
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		log.Fatal("Error on encode user data")
+		log.Fatal("Error on encode user data", err.Error())
 	}
 }
