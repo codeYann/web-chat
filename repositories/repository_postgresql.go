@@ -11,20 +11,20 @@ import (
 	"github.com/codeYann/web-chat/utils"
 )
 
-// PostgresRepository defines a connection to postgres database
-type PostgresRepository struct {
+// IPostgresRepository defines a connection to postgres database
+type IPostgresRepository struct {
 	db *sql.DB
 }
 
-// CreatePostgresRepository returns a new instance of PostgresRepository
-func CreatePostgresRepository(db *sql.DB) *PostgresRepository {
-	return &PostgresRepository{
+// CreateIPostgresRepository returns a new instance of IPostgresRepository
+func CreateIPostgresRepository(db *sql.DB) *IPostgresRepository {
+	return &IPostgresRepository{
 		db: db,
 	}
 }
 
 // FindAll returns a list of users gets by 'SELECT * FROM users' query.
-func (r *PostgresRepository) FindAll() (models.Users, error) {
+func (r *IPostgresRepository) FindAll() (models.Users, error) {
 	var userList models.Users
 	usersResponseChannel := make(chan models.User)
 
@@ -65,7 +65,7 @@ func (r *PostgresRepository) FindAll() (models.Users, error) {
 }
 
 // FindOne returns a single user get by "SELECT * FROM users WHERE id = id"
-func (r *PostgresRepository) FindOne(ID uint64) (models.User, error) {
+func (r *IPostgresRepository) FindOne(ID uint64) (models.User, error) {
 	var user models.User
 	userReponseChannel := make(chan models.User)
 
@@ -97,7 +97,7 @@ func (r *PostgresRepository) FindOne(ID uint64) (models.User, error) {
 }
 
 // SaveOne function creates a new user in the database.
-func (r *PostgresRepository) SaveOne(user models.User) (models.User, error) {
+func (r *IPostgresRepository) SaveOne(user models.User) (models.User, error) {
 	UserSavedChan := make(chan models.User)
 
 	go func() {
@@ -129,7 +129,7 @@ func (r *PostgresRepository) SaveOne(user models.User) (models.User, error) {
 }
 
 // UpdateOne updates a user nickname and return this user.
-func (r *PostgresRepository) UpdateOne(ID uint64, nickname string) (models.User, error) {
+func (r *IPostgresRepository) UpdateOne(ID uint64, nickname string) (models.User, error) {
 	var user models.User
 
 	var waitGroup sync.WaitGroup
@@ -157,7 +157,7 @@ func (r *PostgresRepository) UpdateOne(ID uint64, nickname string) (models.User,
 }
 
 // DeleteOne deletes a user by id.
-func (r *PostgresRepository) DeleteOne(ID uint64) (models.User, error) {
+func (r *IPostgresRepository) DeleteOne(ID uint64) (models.User, error) {
 	var user models.User
 
 	var waitGroup sync.WaitGroup
