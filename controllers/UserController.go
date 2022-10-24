@@ -9,14 +9,13 @@ import (
 	"strconv"
 
 	"github.com/codeYann/web-chat/database"
-	// "github.com/codeYann/web-chat/models"
 	"github.com/codeYann/web-chat/repositories"
 	"github.com/codeYann/web-chat/services"
 	"github.com/gorilla/mux"
 )
 
 func repositoryWrapper(connection *sql.DB) *services.UserService {
-	repository := repositories.CreatePostgresRepository(connection)
+	repository := repositories.CreateIPostgresRepository(connection)
 	return services.CreateUserServices(repository)
 }
 
