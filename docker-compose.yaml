@@ -1,42 +1,39 @@
 version: '3.8'
-
 services:
-  backend:
-    build:
-      contenxt: ./
-    container-name: web-chat-backend
-    entrypoint: dockerize -wait tcp://db:5432 -timeout 30s docker-entrypoint.sh
-    volumes:
-      - ./:/app
-    networks:
-      - chat-network
-    tty: true
-    ports:
-    - "3333:3333"
-    depends_on:
-      - db
-
   db:
-    container-name: web-chat-db
-    image: postgres-14.5-alpine
+    container_name: web-chat-db
+    image: 'postgres:14.5-alpine'
     restart: always
     tty: true
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DATABASE=web_chat
+      - POSTGRES_DB=chat
     ports:
       - '5432:5432'
     volumes:
-      - data:/var/lib/postgres/data
-      - ./data/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - './data:/var/lib/postgres/data'
+      - './data/init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
-      - chat-network
-
+      - web_chat
+  api:
+    build: .
+    container_name: web-chat-backend
+    volumes:
+      - './:/app/'
+    tty: true
+    ports:
+      - '3333:3333'
+    depends_on:
+      - db
+    links:
+      - db
+    networks:
+      - web_chat
 volumes:
   data:
     driver: local
-
 networks:
-  chat-network:
+  web_chat:
     driver: bridge
+
